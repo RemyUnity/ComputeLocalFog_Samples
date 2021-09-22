@@ -1,0 +1,21 @@
+#pragma kernel VoxelizeComputeLocalFog
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
+
+float4 VolumetricFogFunction(float3 voxelCenterWS)
+{
+	// transform world to "object" space coordinate
+	float3 voxelCenterVolSpace = mul(InvVolumeMatrix, float4(voxelCenterWS, 1)).xyz;
+
+	uint3 v = step(frac(voxelCenterVolSpace * 2),0.5);
+
+	voxelCenterVolSpace = voxelCenterVolSpace + 0.5;
+	voxelCenterVolSpace = pow(abs( voxelCenterVolSpace ), 2.2);
+
+	float d = 1 * (v.x ^ v.y ^ v.z);
+
+	// Fog color/attenuation output
+	return float4(voxelCenterVolSpace, d);
+	//return float4(0,1,1, 1);
+}
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"
