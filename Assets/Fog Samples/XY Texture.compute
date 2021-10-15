@@ -11,14 +11,12 @@ SamplerState samplertestTexture
 	AddressV = Wrap;
 };
 
-float4 VolumetricFogFunction(float3 voxelCenterWS)
+float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterBS)
 {
 	// transform world to "object" space coordinate
-	float3 voxelCenterVolSpace = mul(InvVolumeMatrix, float4(voxelCenterWS, 1)).xyz;
+	float3 voxelCenterVolSpace = voxelCenterBS;
 
-	uint3 v = step(frac(voxelCenterVolSpace * 2),0.5);
-
-	voxelCenterVolSpace = voxelCenterVolSpace + 0.5;
+	voxelCenterVolSpace = voxelCenterVolSpace*0.5 + 0.5;
 
 	float3 c = float3(1, 1, 1);
 	c = testTexture.Load(0).rgb;
