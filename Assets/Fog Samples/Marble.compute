@@ -53,8 +53,10 @@ float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
 
     col = lerp(col, float3(0.7, 0.7, 1), 1-c);
 
+    c = smoothstep(0.7, 1, c);
+
     // Fog color/extinction output
-    return float4( col , step(d,1) * max(c, 0.3) );
+    return float4( col , smoothstep(1.0, 0.8, d) * max(c, 0.05) );
 }
 
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"
