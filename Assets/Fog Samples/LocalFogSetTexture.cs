@@ -8,14 +8,13 @@ using UnityEngine.Rendering.HighDefinition;
 [RequireComponent(typeof(LocalVolumetricFog)), ExecuteAlways]
 public class LocalFogSetTexture : MonoBehaviour
 {
+    public string parameterName = "texture";
     public Texture2D texture;
-    public float density = 1;
 
     void SetParams(CommandBuffer cmd, ComputeShader compute, int kernelIndex)
     {
-        RenderTargetIdentifier ri = new RenderTargetIdentifier(texture);
-        cmd.SetComputeTextureParam(compute, kernelIndex, "testTexture", ri);
-        cmd.SetComputeFloatParam(compute, "density", density);
+        RenderTargetIdentifier rti = new RenderTargetIdentifier(texture);
+        cmd.SetComputeTextureParam(compute, kernelIndex, parameterName, rti);
     }
 
     private void OnEnable()

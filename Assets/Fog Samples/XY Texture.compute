@@ -1,32 +1,24 @@
 #pragma kernel VoxelizeComputeLocalFog
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
 
-Texture2D testTexture;
-float density;
+Texture2D XYTexture;
 
-SamplerState samplertestTexture
+SamplerState samplerXYTexture
 {
 	Filter = MIN_MAG_MIP_POINT;
 	AddressU = Wrap;
 	AddressV = Wrap;
 };
 
-float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterBS)
+float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
 {
-	// transform world to "object" space coordinate
-	float3 voxelCenterVolSpace = voxelCenterBS;
+	// transform to "volume space" coordinate for texture sampling
+	float3 uvw = voxelCenterCS * 0.5 + 0.5;
 
-	voxelCenterVolSpace = voxelCenterVolSpace*0.5 + 0.5;
-
-	float3 c = float3(1, 1, 1);
-	c = testTexture.Load(0).rgb;
-	float4 t = 1;
-	t = testTexture.SampleLevel(samplertestTexture, voxelCenterVolSpace.xy, 0);
-	c = t.rgb;
-	float d = density*t.a;
+	float4 t = XYTexture.SampleLevel(samplerXYTexture, uvw.xy, 0);
 
 	// Fog color/attenuation output
-	return float4(c * FogAlbedo, d / FogMeanFreePath);
+	return float4(t.rgb * FogAlbedo, t.a);
 }
 
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"

@@ -1,0 +1,31 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
+
+
+[RequireComponent(typeof(LocalVolumetricFog)), ExecuteAlways]
+public class #SCRIPTNAME# : MonoBehaviour
+{
+    public string parameterName = "myFloat";
+    public float value = 5.0f;
+
+    void SetParams(CommandBuffer cmd, ComputeShader compute, int kernelIndex)
+    {
+        cmd.SetComputeFloatParam(compute, parameterName, value);
+    }
+
+    private void OnEnable()
+    {
+        var lvf = GetComponent<LocalVolumetricFog>();
+        lvf.setup += SetParams;
+    }
+
+    private void OnDisable()
+    {
+        var lvf = GetComponent<LocalVolumetricFog>();
+        lvf.setup -= SetParams;
+    }
+
+}

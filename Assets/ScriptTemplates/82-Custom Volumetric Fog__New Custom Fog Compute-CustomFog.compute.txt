@@ -1,0 +1,30 @@
+#pragma kernel VoxelizeComputeLocalFog
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
+
+// Use this function to output the volumetric fog informations.
+// The output is a float4, RGB beeing the color, and A is the attenuations.
+// The input parameters of the function are:
+//  voxelCenterWS: The world space coordinate of the voxel.
+//  voxelCenterCS: The "center space" coordine of the voxel. This is relative to the dimention of the local volumetric fog component.
+//      (0,0,0) is the object's pivot point, and ranges from (-1,-1,-1) to (1,1,1).
+//
+// ----- Temporary -----
+// You can use the _VolumeTime like _Time shader variable. _Time by itself exists but doesn't seem to update, I will try to find a way to use it for more coherency.
+
+float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
+{
+    float3 c = voxelCenterCS * 0.5;
+
+    c.x += sin(_VolumeTime.y*0.7 + c.y * 4.0) * 0.15;
+    c.y += sin(_VolumeTime.y + c.x * 5.0) * 0.2;
+    c.z += sin(_VolumeTime.y*1.2 + c.x * 6.0) * 0.12;
+
+    c = frac(c * 4.0 );
+    c = step(c, 0.5);
+
+
+    // Fog color/attenuation output
+    return float4( c , 1);
+}
+
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"
