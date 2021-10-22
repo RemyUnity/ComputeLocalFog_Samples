@@ -2,7 +2,7 @@
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBase.hlsl"
 
 // Use this function to output the volumetric fog informations.
-// The output is a float4, RGB beeing the color, and A is the attenuations.
+// The output is a float4, RGB beeing the color, and A is the extinction.
 // The input parameters of the function are:
 //  voxelCenterWS: The world space coordinate of the voxel.
 //  voxelCenterCS: The "center space" coordine of the voxel. This is relative to the dimention of the local volumetric fog component.
@@ -43,7 +43,7 @@ float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
     float d1 = saturate(1 - d);
 
     float c2 = c;
-    c2 = 2.2 - c2;
+    c2 = 2.4 - c2;
     c2 = pow(c2, 5);
     c2 = saturate(c2);
 
@@ -53,8 +53,8 @@ float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
 
     col = lerp(col, float3(0.7, 0.7, 1), 1-c);
 
-    // Fog color/attenuation output
-    return float4( col , step(d,1) * max(c, 0.05) );
+    // Fog color/extinction output
+    return float4( col , step(d,1) * max(c, 0.3) );
 }
 
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"

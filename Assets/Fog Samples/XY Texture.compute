@@ -17,8 +17,8 @@ float4 VolumetricFogFunction(float3 voxelCenterWS, float3 voxelCenterCS)
 
 	float4 t = XYTexture.SampleLevel(samplerXYTexture, uvw.xy, 0);
 
-	// Fog color/attenuation output
-	return float4(t.rgb * FogAlbedo, t.a);
+	// Fog color/extinction output
+	return float4(t.rgb, t.a);
 }
 
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Lighting/VolumetricLighting/CustomDensityVolumeBlend.hlsl"
